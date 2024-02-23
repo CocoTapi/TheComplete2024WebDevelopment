@@ -17,17 +17,19 @@ db.connect();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-
-//Get home page
-app.get("/", async (req, res) => {
+async function checkVisited() {
   const result = await db.query("SELECT country_code FROM visited_countries");
   let countries = [];
   result.rows.forEach((country) => {
     countries.push(country.country_code);
   });
   console.log(result.rows);
-  //console.log(result);
+  return countries;
+}
 
+//Get home page
+app.get("/", async (req, res) => {
+ const countries = await checkVisited();
   res.render("index.ejs", { countries: countries, total: countries.length });
 });
 
