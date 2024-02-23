@@ -40,7 +40,8 @@ app.post("/add", async(req, res) => {
   console.log(`input is: ${input}`);
 
   const result = await db.query(
-    `SELECT country_code FROM countries WHERE country_name = '${input}'`
+    "SELECT country_code FROM countries WHERE country_name = $1",
+    [input]
   );
 
   console.log(result);
@@ -52,7 +53,8 @@ app.post("/add", async(req, res) => {
     console.log(`countryCode is: ${countryCode}`);
 
     await db.query(
-      `INSERT INTO visited_countries (country_code) VALUES ('${countryCode}')`
+      "INSERT INTO visited_countries (country_code) VALUES ($1)",
+      [countryCode]
     );
     res.redirect("/");
   }
