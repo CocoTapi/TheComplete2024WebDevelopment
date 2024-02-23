@@ -20,7 +20,7 @@ app.use(express.static("public"));
 
 //Get home page
 app.get("/", async (req, res) => {
-  const result = await db.query("SELECT country_code FROM visited_country");
+  const result = await db.query("SELECT country_code FROM visited_countries");
   let countries = [];
   result.rows.forEach((country) => {
     countries.push(country.country_code);
@@ -29,9 +29,45 @@ app.get("/", async (req, res) => {
   //console.log(result);
 
   res.render("index.ejs", { countries: countries, total: countries.length });
-  db.end();
 });
+
+//INSERT new country
+app.post("/add", async(req, res) => {
+  const input = req.body["country"];
+  
+  console.log(`input is: ${input}`);
+
+  const result = await db.query(
+    `SELECT country_code FROM countries WHERE country_name = '${input}'`
+  );
+
+  console.log(result);
+
+  if(result.rows.length !== 0) {
+    const data = result.rows[0];
+    const countryCode = data.country_code;
+   
+    console.log(`countryCode is: ${countryCode}`);
+
+    await db.query(
+      `INSERT INTO visited_countries (country_code) VALUES ('${countryCode}')`
+    );
+    res.redirect("/");
+  }
+})
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
+});
+
+process.on('SIGINT', async () => {
+  try {
+    console.log('Closing database connection...');
+    await db.end();
+    console.log('Database connection closed.');
+    process.exit(0);
+  } catch (error) {
+    console.error('Error closing database connection:', error);
+    process.exit(1);
+  }
 });

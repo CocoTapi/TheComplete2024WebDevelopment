@@ -14,6 +14,9 @@ const db = new pg.Client({
 });
 db.connect();
 
+app.set("view engine", "ejs"); // Set EJS as the view engine
+app.set("views", path.join(__dirname, "views")); // Set the views directory
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
