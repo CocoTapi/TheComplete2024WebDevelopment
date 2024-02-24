@@ -93,20 +93,24 @@ app.post("/user", async (req, res) => {
   if (req.body.add === "new") {
     res.render("new.ejs");
   } else {
+    //get current user id from user click
     currentUserId = req.body.user;
     res.redirect("/");
   }
 });
 
 app.post("/new", async (req, res) => {
-  const inputName = req.body["name"];
-  const color = req.body["color"];
+  const inputName = req.body.name;
+  const color = req.body.color;
 
   try {
     const result = await db.query(
-      "INSERT INTO users(name, color) VALUES ($1, $2)",
+      "INSERT INTO users (name, color) VALUES ($1, $2) RETURNING *",
       [inputName, color]
     );
+
+    const id = result.rows[0].user_id;
+    currentUserId = id;
     res.redirect("/");
   } catch(error) {
     console.log(error);
