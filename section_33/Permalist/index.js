@@ -1,8 +1,18 @@
 import express from "express";
 import bodyParser from "body-parser";
+import pg from "pg";
 
 const app = express();
 const port = 3000;
+
+const db = new pg.Client({
+  user: "postgres",
+  host: "localhost",
+  database: "world",
+  password: "password",
+  port: 5432,
+});
+db.connect();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -12,7 +22,22 @@ let items = [
   { id: 2, title: "Finish homework" },
 ];
 
-app.get("/", (req, res) => {
+async function fetchItems() {
+  const result = await db.query(
+    "SELECT * FROM items"
+  );
+    
+  result.rows.forEach((item) => {
+    items.push(item);
+  });
+
+  console.log(items);
+  return items;
+}
+
+app.get("/", async (req, res) => {
+  const items = await fetchItems();
+
   res.render("index.ejs", {
     listTitle: "Today",
     listItems: items,
