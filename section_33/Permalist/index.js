@@ -17,31 +17,36 @@ db.connect();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// let items = [
-//   { id: 1, title: "Buy milk" },
-//   { id: 2, title: "Finish homework" },
-// ];
+let items = [
+  { id: 1, title: "Buy milk" },
+  { id: 2, title: "Finish homework" },
+];
 
 async function fetchItems() {
   const result = await db.query(
     "SELECT * FROM items ORDER BY id ASC"
   );
-  let items = [];  
-  result.rows.forEach((item) => {
-    items.push(item);
-  });
+  // let items = [];  
+  // result.rows.forEach((item) => {
+  //   items.push(item);
+  // });
 
-  console.log(items);
+  // console.log(items);
+  items = result.rows;
   return items;
 }
 
 app.get("/", async(req, res) => {
-  const items = await fetchItems();
+  try{
+    const items = await fetchItems();
 
-  res.render("index.ejs", {
-    listTitle: items.title,
-    listItems: items,
-  });
+    res.render("index.ejs", {
+      listTitle: "TODAY",
+      listItems: items,
+    });
+  } catch(error) {
+    console.log(error);
+  }
 });
 
 app.post("/add", async(req, res) => {
