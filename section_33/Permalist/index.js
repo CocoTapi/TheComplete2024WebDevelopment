@@ -55,7 +55,7 @@ app.post("/add", async(req, res) => {
   try{
     const result = await db.query(
       "INSERT INTO items(title) VALUES ($1)",
-      [item.toLowerCase()]
+      [item]
     );
     res.redirect("/");
   } catch(error){
