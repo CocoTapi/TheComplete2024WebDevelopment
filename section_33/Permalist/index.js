@@ -24,7 +24,7 @@ app.use(express.static("public"));
 
 async function fetchItems() {
   const result = await db.query(
-    "SELECT * FROM items"
+    "SELECT * FROM items ORDER BY id ASC"
   );
   let items = [];  
   result.rows.forEach((item) => {
