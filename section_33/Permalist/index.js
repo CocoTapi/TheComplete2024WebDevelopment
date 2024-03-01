@@ -8,7 +8,7 @@ const port = 3000;
 const db = new pg.Client({
   user: "postgres",
   host: "localhost",
-  database: "world",
+  database: "permalist",
   password: "password",
   port: 5432,
 });
@@ -18,8 +18,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 let items = [
-  { id: 1, title: "Buy milk" },
-  { id: 2, title: "Finish homework" },
+  // { id: 1, title: "Buy milk" },
+  // { id: 2, title: "Finish homework" },
 ];
 
 async function fetchItems() {
@@ -39,7 +39,7 @@ app.get("/", async (req, res) => {
   const items = await fetchItems();
 
   res.render("index.ejs", {
-    listTitle: "Today",
+    listTitle: items.title,
     listItems: items,
   });
 });
@@ -55,5 +55,5 @@ app.post("/edit", (req, res) => {});
 app.post("/delete", (req, res) => {});
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
