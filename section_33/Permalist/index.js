@@ -17,16 +17,16 @@ db.connect();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-let items = [
-  // { id: 1, title: "Buy milk" },
-  // { id: 2, title: "Finish homework" },
-];
+// let items = [
+//   { id: 1, title: "Buy milk" },
+//   { id: 2, title: "Finish homework" },
+// ];
 
 async function fetchItems() {
   const result = await db.query(
     "SELECT * FROM items"
   );
-    
+  let items = [];  
   result.rows.forEach((item) => {
     items.push(item);
   });
@@ -35,7 +35,7 @@ async function fetchItems() {
   return items;
 }
 
-app.get("/", async (req, res) => {
+app.get("/", async(req, res) => {
   const items = await fetchItems();
 
   res.render("index.ejs", {
@@ -44,15 +44,48 @@ app.get("/", async (req, res) => {
   });
 });
 
-app.post("/add", (req, res) => {
+app.post("/add", async(req, res) => {
   const item = req.body.newItem;
-  items.push({ title: item });
-  res.redirect("/");
+
+  try{
+    const result = await db.query(
+      "INSERT INTO items(title) VALUES ($1)",
+      [item.toLowerCase()]
+    );
+    res.redirect("/");
+  } catch(error){
+    console.log(error)
+  }
 });
 
-app.post("/edit", (req, res) => {});
+app.post("/edit", async(req, res) => {
+  const itemId = req.body.updatedItemId;
+  const updatedItemTitle = req.body.updatedItemTitle;
 
-app.post("/delete", (req, res) => {});
+  try {
+    const result = await db.query(
+      "UPDATE items SET title = $1 WHERE id = $2",
+      [updatedItemTitle, itemId]
+    );
+    res.redirect("/");
+  } catch(error){
+    console.log(error);
+  }
+});
+
+app.post("/delete", async(req, res) => {
+  const itemID = req.body.deleteItemId;
+
+  try{
+    const result = await db.query(
+      "DELETE FROM items WHERE id = $1",
+      [itemID]
+    );
+    res.redirect("/");
+  } catch(error){
+    console.log(error);
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
