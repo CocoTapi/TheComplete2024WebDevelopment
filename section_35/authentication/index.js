@@ -37,7 +37,7 @@ app.post("/register", async (req, res) => {
     const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [email]);
 
     if (checkResult.rows.length > 0) {
-      console.log(checkResult);
+      //console.log(checkResult);
       res.send("Email already exists. Try logging in.")
     } else {
       const result = await db.query(
@@ -45,7 +45,7 @@ app.post("/register", async (req, res) => {
         [email, password]
       );
 
-      console.log(result);
+      //console.log(result);
 
       res.render("secrets.ejs");
     }
@@ -63,16 +63,17 @@ app.post("/login", async (req, res) => {
     const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [email]);
 
     if (checkResult.rows.length > 0) {
-      console.log(result);
+      //console.log(checkResult);
+      const user = checkResult.rows[0];
+      const storedPassword = user.password;
+
+      if (password === storedPassword){
+        res.render("secrets.ejs");
+      } else {
+        res.send("Incorrect Password");
+      }
     } else {
-      const result = db.query(
-        "INSERT INTO users(email, password) VALUES ($1, $2)",
-        [email, password]
-      );
-
-      console.log(result);
-
-      res.render("secrets.ejs");
+      res.send("User not found")
     }
   } catch(error) {
     console.log(error)
