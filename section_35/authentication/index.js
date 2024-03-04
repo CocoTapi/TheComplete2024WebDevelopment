@@ -34,12 +34,13 @@ app.post("/register", async (req, res) => {
   const password = req.body.password;
 
   try {
-    const checkResult = db.query("SELECT * FROM users WHERE email = $1", [email]);
+    const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [email]);
 
-    if (checkResult.length > 0) {
+    if (checkResult.rows.length > 0) {
+      console.log(checkResult);
       res.send("Email already exists. Try logging in.")
     } else {
-      const result = db.query(
+      const result = await db.query(
         "INSERT INTO users(email, password) VALUES ($1, $2)",
         [email, password]
       );
@@ -58,8 +59,24 @@ app.post("/login", async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;
 
-  console.log(email);
-  console.log(password);
+  try {
+    const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [email]);
+
+    if (checkResult.rows.length > 0) {
+      console.log(result);
+    } else {
+      const result = db.query(
+        "INSERT INTO users(email, password) VALUES ($1, $2)",
+        [email, password]
+      );
+
+      console.log(result);
+
+      res.render("secrets.ejs");
+    }
+  } catch(error) {
+    console.log(error)
+  }
 });
 
 app.listen(port, () => {
