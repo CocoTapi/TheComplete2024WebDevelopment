@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import session from "express-session";
+import GoogleStrategy from "passport-google-oauth2";
 import env from "dotenv";
 
 const app = express();
@@ -65,6 +66,12 @@ app.get("/secrets", (req, res) => {
   }
 });
 
+//                                             ----this is matches with the name that you use in "passport.use("google"...)"
+app.get("/auth/google", passport.authenticate("google", {
+  //we will get profile and email from google account
+  scope: ["profile", "email"],
+}))
+
 app.post(
   "/login",
   passport.authenticate("local", {
@@ -107,6 +114,7 @@ app.post("/register", async (req, res) => {
 });
 
 passport.use(
+  "local",
   new Strategy(async function verify(username, password, cb) {
     try {
       const result = await db.query("SELECT * FROM users WHERE email = $1 ", [
@@ -138,6 +146,21 @@ passport.use(
     }
   })
 );
+
+passport.use(
+  "google", 
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/secrets",
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+    }, 
+    async (accessToken, refreshToken, profile, cb) => {
+      console.log(profile);
+    }
+  )
+)
 
 passport.serializeUser((user, cb) => {
   cb(null, user);
