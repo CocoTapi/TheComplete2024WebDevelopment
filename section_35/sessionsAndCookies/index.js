@@ -20,7 +20,11 @@ app.use(
     //if you choose true, you can save the session in database such as postgreSQL
     resave: false,
     //this allows you to save the session in your server memory
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {
+      //15 mins
+      maxAge: 1000 * 60 * 15
+    }
   })
 )
 
