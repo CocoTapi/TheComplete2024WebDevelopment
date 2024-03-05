@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
 import bcrypt from "bcrypt";
+import session from "express-session";
+import passport from "passport";
 
 const app = express();
 const port = 3000;
@@ -10,11 +12,26 @@ const saltRounds = 10;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+app.use(
+  session({
+    //secret: you can set any string
+    secret: "TOPSECRETWORD",
+    //if you choose true, you can save the session in database such as postgreSQL
+    resave: false,
+    //this allows you to save the session in your server memory
+    saveUninitialized: true
+  })
+)
+
+//passport needs to be after the session setup
+app.use(passport.initialize());
+app.use(passport.session());
+
 const db = new pg.Client({
   user: "postgres",
   host: "localhost",
   database: "secrets",
-  password: "123456",
+  password: "passport",
   port: 5432,
 });
 db.connect();
