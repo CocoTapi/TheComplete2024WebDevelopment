@@ -15,13 +15,18 @@ function CreateArea(props) {
         ...prevNote,
         [name]: value
       }
-    })
+    });
   }
 
   const submitHandler = (e) => {
     e.preventDefault();
     props.onSubmit(note);
     console.log("SUBMIT");
+
+    setNote({
+      title: "",
+      content: ""
+    });
   }
 
   return (
