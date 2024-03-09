@@ -22,7 +22,7 @@ app.get("jokes/:id", async (req, res) => {
     joke.id === id;
   });
 
-  res.json(jokes[foundJoke]);
+  res.json(foundJoke);
 })
 
 //3. GET a jokes by filtering on the joke type
