@@ -8,14 +8,14 @@ const masterKey = "4VGP2DN-6EWM4SJ-N6FGRHV-Z3PR3TT";
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //1. GET a random joke
-app.get("/random", async (req, res) => {
+app.get("/random", (req, res) => {
   const randomIndex = Math.floor(Math.randome() * jokes.length);
 
   res.json(jokes[randomIndex])
 });
 
 //2. GET a specific joke
-app.get("jokes/:id", async (req, res) => {
+app.get("jokes/:id", (req, res) => {
   const id = parseInt(req.params.id);
   //make sure id is integer, not string. if not, return false here
   const foundJoke = jokes.find((joke) => {
@@ -26,6 +26,7 @@ app.get("jokes/:id", async (req, res) => {
 })
 
 //3. GET a jokes by filtering on the joke type
+app.get("filter?type=", )
 
 //4. POST a new joke
 
