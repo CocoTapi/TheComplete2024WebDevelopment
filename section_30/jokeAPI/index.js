@@ -53,8 +53,39 @@ app.post("/jokes", (req, res) => {
 })
 
 //5. PUT a joke
+app.put("/jokes/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const updatedJoke = {
+    id: id,
+    jokeText: req.body.text,
+    jokeType: req.body.type,
+  }
+
+ //jokes[id + 1] = updatedJoke;
+ const serchedIndex = jokes.findIndex((joke) => joke.id === id);
+ jokes[serchedIndex] = updatedJoke;
+
+ res.json(updatedJoke);
+})
 
 //6. PATCH a joke
+app.patch("/jokes/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const existingJoke = jokes.find((joke) => joke.id === id);
+
+  const updatedJoke =  {
+    id: id,
+    jokeText: req.body.text || existingJoke.jokeText,
+    jokeType: req.body.type || existingJoke.jokeType,
+  }
+
+ const searchedIndex = jokes.findIndex((joke) => joke.id === id);
+ jokes[searchedIndex] = updatedJoke;
+
+ console.log(jokes[searchedIndex]);
+
+ res.json(updatedJoke);
+})
 
 //7. DELETE Specific joke
 
