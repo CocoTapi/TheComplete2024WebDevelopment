@@ -10,10 +10,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //1. GET a random joke
 app.get("/random", async (req, res) => {
   const randomIndex = Math.floor(Math.randome() * jokes.length);
+
   res.json(jokes[randomIndex])
 });
 
 //2. GET a specific joke
+app.get("jokes/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  //make sure id is integer, not string. if not, return false here
+  const foundJoke = jokes.find((joke) => {
+    joke.id === id;
+  });
+
+  res.json(jokes[foundJoke]);
+})
 
 //3. GET a jokes by filtering on the joke type
 
