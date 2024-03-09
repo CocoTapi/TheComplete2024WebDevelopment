@@ -9,24 +9,32 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //1. GET a random joke
 app.get("/random", (req, res) => {
-  const randomIndex = Math.floor(Math.randome() * jokes.length);
+  const randomIndex = Math.floor(Math.random() * jokes.length);
 
   res.json(jokes[randomIndex])
 });
 
 //2. GET a specific joke
-app.get("jokes/:id", (req, res) => {
+app.get("/jokes/:id", (req, res) => {
   const id = parseInt(req.params.id);
   //make sure id is integer, not string. if not, return false here
-  const foundJoke = jokes.find((joke) => {
-    joke.id === id;
-  });
+  const foundJoke = jokes.find((joke) =>
+    //no curly blackets!!
+    joke.id === id
+  );
 
   res.json(foundJoke);
 })
 
 //3. GET a jokes by filtering on the joke type
-app.get("filter?type=", )
+app.get("/filter", (req, res) => {
+  const type = req.query.type;
+  //filter method returns an array with objects 
+  const filteredActivities = jokes.filter((joke) =>
+    joke.jokeType === type
+  )
+  res.json(filteredActivities)
+});
 
 //4. POST a new joke
 
