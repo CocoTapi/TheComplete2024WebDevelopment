@@ -37,6 +37,20 @@ app.get("/filter", (req, res) => {
 });
 
 //4. POST a new joke
+app.post("/jokes", (req, res) => {
+  //"body" comes from line 8, express's body-parser
+  const newJoke = {
+    id: jokes.length + 1,
+    jokeText: req.body.text,
+    jokeType: req.body.type,
+  };
+
+  jokes.push(newJoke);
+  //print the last joke which you just added
+  console.log(jokes.slice(-1))
+
+  res.json(newJoke);
+})
 
 //5. PUT a joke
 
