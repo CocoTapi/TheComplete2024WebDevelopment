@@ -41,14 +41,69 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //Write your code here//
 
 //CHALLENGE 1: GET All posts
+app.get("/posts", (req, res) => {
+  console.log(posts);
+
+  res.json(posts);
+})
 
 //CHALLENGE 2: GET a specific post by id
+app.get("/posts/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const searchIndex = posts.findIndex((post) => post.id === id);
+
+  res.json(posts[searchIndex]);
+})
 
 //CHALLENGE 3: POST a new post
+app.post("/posts", (req, res) => {
+  const newPost = {
+    id: posts.length + 1,
+    title: req.body.title,
+    content: req.body.content,
+    author: req.body.author,
+    date: new Date()
+  }
+
+  posts.push(newPost);
+  console.log(newPost);
+
+  res.json(newPost);
+})
 
 //CHALLENGE 4: PATCH a post when you just want to update one parameter
+app.patch("/posts/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const beforeEdit = posts.find((post) => post.id === id);
+  const updatedPost = {
+    id: id,
+    title: req.body.title || beforeEdit.title,
+    content: req.body.content || beforeEdit.content,
+    author: req.body.author || beforeEdit.author,
+    date: new Date()
+  };
+  const searchIndex = posts.findIndex((post) => post.id === id);
+
+  posts[searchIndex] = updatedPost;
+  console.log(posts[searchIndex]);
+
+  res.json(posts[searchIndex]);
+})
 
 //CHALLENGE 5: DELETE a specific post by providing the post id.
+app.delete("/posts/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const searchIndex = posts.findIndex((post) => post.id === id);
+
+  if (searchIndex > -1) {
+    posts.splice(searchIndex, 1);
+    res.sendStatus(200);
+  } else {
+    res
+      .sendStatus(404)
+      .json({ error: "Somethign went wrong. Try again later."})
+  }
+})
 
 app.listen(port, () => {
   console.log(`API is running at http://localhost:${port}`);
