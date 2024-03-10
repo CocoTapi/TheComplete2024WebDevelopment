@@ -59,18 +59,21 @@ app.get("/posts/:id", (req, res) => {
 
 //CHALLENGE 3: POST a new post
 app.post("/posts", (req, res) => {
+  const newId = lastId += 1;
   const newPost = {
-    id: posts.length + 1,
+    id: newId,
     title: req.body.title,
     content: req.body.content,
     author: req.body.author,
     date: new Date(),
   };
 
-  posts.push(newPost);
-  console.log(newPost);
+  lastId = newId;
 
-  res.json(newPost);
+  posts.push(newPost);
+  //console.log(newPost);
+
+  res.status(201).json(newPost);
 });
 
 //CHALLENGE 4: PATCH a post when you just want to update one parameter
@@ -78,7 +81,7 @@ app.patch("/posts/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const beforeEdit = posts.find((post) => post.id === id);
   if (!beforeEdit) return res.status(404).json({ message: "Post not found" });
-  
+
   const updatedPost = {
     id: id,
     title: req.body.title || beforeEdit.title,
@@ -89,7 +92,7 @@ app.patch("/posts/:id", (req, res) => {
   const searchIndex = posts.findIndex((post) => post.id === id);
 
   posts[searchIndex] = updatedPost;
-  console.log(posts[searchIndex]);
+  //console.log(posts[searchIndex]);
 
   res.json(posts[searchIndex]);
 });
@@ -101,7 +104,7 @@ app.delete("/posts/:id", (req, res) => {
 
   if (searchIndex > -1) {
     posts.splice(searchIndex, 1);
-    res.sendStatus(200);
+    res.json({ message: "Post deleted."});
   } else {
     res
       .sendStatus(404)
