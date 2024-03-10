@@ -45,15 +45,17 @@ app.get("/posts", (req, res) => {
   console.log(posts);
 
   res.json(posts);
-})
+});
 
 //CHALLENGE 2: GET a specific post by id
 app.get("/posts/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const searchIndex = posts.findIndex((post) => post.id === id);
 
+  if(!searchIndex) return res.status(404).json({ message: "Post not found" });
+
   res.json(posts[searchIndex]);
-})
+});
 
 //CHALLENGE 3: POST a new post
 app.post("/posts", (req, res) => {
@@ -62,19 +64,21 @@ app.post("/posts", (req, res) => {
     title: req.body.title,
     content: req.body.content,
     author: req.body.author,
-    date: new Date()
-  }
+    date: new Date(),
+  };
 
   posts.push(newPost);
   console.log(newPost);
 
   res.json(newPost);
-})
+});
 
 //CHALLENGE 4: PATCH a post when you just want to update one parameter
 app.patch("/posts/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const beforeEdit = posts.find((post) => post.id === id);
+  if (!beforeEdit) return res.status(404).json({ message: "Post not found" });
+  
   const updatedPost = {
     id: id,
     title: req.body.title || beforeEdit.title,
@@ -88,7 +92,7 @@ app.patch("/posts/:id", (req, res) => {
   console.log(posts[searchIndex]);
 
   res.json(posts[searchIndex]);
-})
+});
 
 //CHALLENGE 5: DELETE a specific post by providing the post id.
 app.delete("/posts/:id", (req, res) => {
@@ -101,9 +105,9 @@ app.delete("/posts/:id", (req, res) => {
   } else {
     res
       .sendStatus(404)
-      .json({ error: "Somethign went wrong. Try again later."})
+      .json({ message: "Post not found."})
   }
-})
+});
 
 app.listen(port, () => {
   console.log(`API is running at http://localhost:${port}`);
